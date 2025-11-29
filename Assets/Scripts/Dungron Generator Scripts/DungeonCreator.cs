@@ -84,10 +84,14 @@ public class DungeonCreator : MonoBehaviour
         };
 
         Vector2[] uvs = new Vector2[vertices.Length];
-        for (int i = 0; i < uvs.Length; i++)
-        {
-            uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
-        }
+
+        float textureScaleX = 1;
+        float textureScaleY = 1;
+
+        uvs[0] = new Vector2(0, textureScaleY);
+        uvs[1] = new Vector2(textureScaleX, textureScaleY);
+        uvs[2] = new Vector2(0, 0);
+        uvs[3] = new Vector2(textureScaleX, 0);
 
         int[] triangles = new int[]
         {
@@ -103,7 +107,11 @@ public class DungeonCreator : MonoBehaviour
         mesh.uv = uvs;
         mesh.triangles = triangles;
 
-        GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer));
+        GameObject dungeonFloor = new GameObject(
+            "Mesh" + bottomLeftCorner,
+            typeof(MeshFilter),
+            typeof(MeshRenderer),
+            typeof(BoxCollider));
 
         dungeonFloor.transform.position = Vector3.zero;
         dungeonFloor.transform.localScale = Vector3.one;
@@ -111,29 +119,60 @@ public class DungeonCreator : MonoBehaviour
         dungeonFloor.GetComponent<MeshRenderer>().material = material;
         dungeonFloor.transform.parent = transform;
 
+        // BoxCollider to match the room floor
+        BoxCollider floorCollider = dungeonFloor.GetComponent<BoxCollider>();
+        if (floorCollider == null)
+        {
+            floorCollider = dungeonFloor.AddComponent<BoxCollider>();
+        }
+
+        float width = topRightCorner.x - bottomLeftCorner.x;
+        float length = topRightCorner.y - bottomLeftCorner.y;
+
+        floorCollider.size = new Vector3(width, 0.1f, length);
+        floorCollider.center = new Vector3(
+            bottomLeftCorner.x + width / 2f,
+            0f,
+            bottomLeftCorner.y + length / 2f);
+
         for (int row = (int)bottomLeftV.x; row < (int)bottomRightV.x; row++)
         {
             var wallPosition = new Vector3(row, 0, bottomLeftV.z);
-            AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
+            AddWallPositionToList(
+                wallPosition,
+                possibleWallHorizontalPosition,
+                possibleDoorHorizontalPosition);
         }
-        for (int row = (int)topLeftV.x; row < (int)topRightCorner.x; row++)
+        for (int row = (int)topLeftV.x; row < (int)topRightV.x; row++)
         {
             var wallPosition = new Vector3(row, 0, topRightV.z);
-            AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
+            AddWallPositionToList(
+                wallPosition,
+                possibleWallHorizontalPosition,
+                possibleDoorHorizontalPosition);
         }
         for (int col = (int)bottomLeftV.z; col < (int)topLeftV.z; col++)
         {
             var wallPosition = new Vector3(bottomLeftV.x, 0, col);
-            AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
+            AddWallPositionToList(
+                wallPosition,
+                possibleWallVerticalPosition,
+                possibleDoorVerticalPosition);
         }
         for (int col = (int)bottomRightV.z; col < (int)topRightV.z; col++)
         {
             var wallPosition = new Vector3(bottomRightV.x, 0, col);
-            AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
+            AddWallPositionToList(
+                wallPosition,
+                possibleWallVerticalPosition,
+                possibleDoorVerticalPosition);
         }
     }
 
-    private void AddWallPositionToList(Vector3 wallPosition, List<Vector3Int> wallList, List<Vector3Int> doorList)
+    private void AddWallPositionToList(
+        Vector3 wallPosition,
+        List<Vector3Int> wallList,
+        List<Vector3Int> doorList)
     {
         Vector3Int point = Vector3Int.CeilToInt(wallPosition);
         if (wallList.Contains(point))
