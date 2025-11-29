@@ -60,6 +60,9 @@ public class DungeonCreator : MonoBehaviour
         possibleWallHorizontalPosition = new List<Vector3Int>();
         possibleWallVerticalPosition = new List<Vector3Int>();
 
+        // Clear per-tile orientation cache before rebuilding
+        WallBuilder.ResetFlipLookup();
+
         float largestArea = 0f;
         float smallestArea = float.MaxValue;
         Vector2 largestBottomLeft = Vector2.zero;
@@ -158,18 +161,15 @@ public class DungeonCreator : MonoBehaviour
 
         Vector2[] uvs = new Vector2[vertices.Length];
 
-        float textureScaleX = 1;
-        float textureScaleY = 1;
-
-        uvs[0] = new Vector2(0, textureScaleY);
-        uvs[1] = new Vector2(textureScaleX, textureScaleY);
+        uvs[0] = new Vector2(0, 1);
+        uvs[1] = new Vector2(1, 1);
         uvs[2] = new Vector2(0, 0);
-        uvs[3] = new Vector2(textureScaleX, 0);
+        uvs[3] = new Vector2(1, 0);
 
         int[] triangles = new int[]
         {
-            0, 1, 2,
-            2, 1, 3
+            0,1,2,
+            2,1,3
         };
 
         Mesh mesh = new Mesh();
@@ -177,29 +177,23 @@ public class DungeonCreator : MonoBehaviour
         mesh.uv = uvs;
         mesh.triangles = triangles;
 
-        GameObject dungeonFloor = new GameObject(
-            "Mesh" + bottomLeftCorner,
-            typeof(MeshFilter),
-            typeof(MeshRenderer),
-            typeof(BoxCollider));
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
 
-        dungeonFloor.transform.position = Vector3.zero;
-        dungeonFloor.transform.localScale = Vector3.one;
-        dungeonFloor.transform.parent = transform;
+        GameObject floor = new GameObject("Mesh " + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider));
+        floor.transform.position = Vector3.zero;
+        floor.transform.localScale = Vector3.one;
+        floor.transform.parent = transform;
+        floor.GetComponent<MeshFilter>().mesh = mesh;
+        floor.GetComponent<MeshRenderer>().material = material;
 
-        dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
-        dungeonFloor.GetComponent<MeshRenderer>().material = material;
-
-        // Floor collider sized to that room rectangle (XZ)
-        BoxCollider floorCollider = dungeonFloor.GetComponent<BoxCollider>();
-
+        BoxCollider collider = floor.GetComponent<BoxCollider>();
         float width = topRightCorner.x - bottomLeftCorner.x;
         float length = topRightCorner.y - bottomLeftCorner.y;
-
-        floorCollider.size = new Vector3(width, 0.1f, length);
-        floorCollider.center = new Vector3(
+        collider.size = new Vector3(width, 1, length);
+        collider.center = new Vector3(
             bottomLeftCorner.x + width / 2f,
-            0f,
+            0.5f,
             bottomLeftCorner.y + length / 2f);
     }
 
