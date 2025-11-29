@@ -43,9 +43,9 @@ public class CorridorNode : Node
     private void ProcessRoomInRelationRightOrLeft(Node structure1, Node structure2)
     {
         Node leftStructure = null;
-        List<Node> leftStructureChildren = StructureHelper.TraverseGraphToExtractLowestLeaves(structure1);
+        List<Node> leftStructureChildren = StructureHelper.TraverseGraphToExtractLowestLeafes(structure1);
         Node rightStructure = null;
-        List<Node> rightStructureChildren = StructureHelper.TraverseGraphToExtractLowestLeaves(structure2);
+        List<Node> rightStructureChildren = StructureHelper.TraverseGraphToExtractLowestLeafes(structure2);
 
         var sortedLeftStructure = leftStructureChildren.OrderByDescending(child => child.TopRightAreaCorner.x).ToList();
         if (sortedLeftStructure.Count == 1)
@@ -68,6 +68,7 @@ public class CorridorNode : Node
                 child.BottomLeftAreaCorner
                 ) != -1
             ).OrderBy(child => child.BottomRightAreaCorner.x).ToList();
+
         if (possibleNeighboursInRightStructureList.Count <= 0)
         {
             rightStructure = structure2;
@@ -128,9 +129,9 @@ public class CorridorNode : Node
     private void ProcessRoomInRelationUpOrDown(Node structure1, Node structure2)
     {
         Node bottomStructure = null;
-        List<Node> structureBottmChildren = StructureHelper.TraverseGraphToExtractLowestLeaves(structure1);
+        List<Node> structureBottmChildren = StructureHelper.TraverseGraphToExtractLowestLeafes(structure1);
         Node topStructure = null;
-        List<Node> structureAboveChildren = StructureHelper.TraverseGraphToExtractLowestLeaves(structure2);
+        List<Node> structureAboveChildren = StructureHelper.TraverseGraphToExtractLowestLeafes(structure2);
 
         var sortedBottomStructure = structureBottmChildren.OrderByDescending(child => child.TopRightAreaCorner.y).ToList();
 
@@ -229,7 +230,7 @@ public class CorridorNode : Node
         {
             return RelativePosition.Up;
         }
-        else if ((angle > -135 && angle < -45))
+        else if (angle > -135 && angle < -45)
         {
             return RelativePosition.Down;
         }

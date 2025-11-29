@@ -15,16 +15,16 @@ public class RoomGenerator
         this.roomWidthMin = roomWidthMin;
     }
 
-    public List<RoomNode> GenerateRoomInAGivenSpaces(List<Node> roomSpaces, 
-        float roomBottomCornerModifier, float roomTopCornerModifier, int roomOffset)
+    public List<RoomNode> GenerateRoomsInGivenSpaces(List<Node> roomSpaces, float roomBottomCornerModifier, float roomTopCornerMidifier, int roomOffset)
     {
         List<RoomNode> listToReturn = new List<RoomNode>();
-        foreach(var space in roomSpaces)
+        foreach (var space in roomSpaces)
         {
             Vector2Int newBottomLeftPoint = StructureHelper.GenerateBottomLeftCornerBetween(
                 space.BottomLeftAreaCorner, space.TopRightAreaCorner, roomBottomCornerModifier, roomOffset);
+
             Vector2Int newTopRightPoint = StructureHelper.GenerateTopRightCornerBetween(
-                space.BottomLeftAreaCorner,space.TopRightAreaCorner, roomTopCornerModifier, roomOffset);
+                space.BottomLeftAreaCorner, space.TopRightAreaCorner, roomTopCornerMidifier, roomOffset);
             space.BottomLeftAreaCorner = newBottomLeftPoint;
             space.TopRightAreaCorner = newTopRightPoint;
             space.BottomRightAreaCorner = new Vector2Int(newTopRightPoint.x, newBottomLeftPoint.y);

@@ -1,34 +1,33 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
-internal class DungeonGenerator
+public class DugeonGenerator
 {
-    List<RoomNode> allNodeCollection = new List<RoomNode>();
+
+    List<RoomNode> allNodesCollection = new List<RoomNode>();
     private int dungeonWidth;
     private int dungeonLength;
 
-    public DungeonGenerator(int dungeonWidth, int dungeonLength)
+    public DugeonGenerator(int dungeonWidth, int dungeonLength)
     {
         this.dungeonWidth = dungeonWidth;
         this.dungeonLength = dungeonLength;
     }
 
-    public List <Node> CalculateDungeon(int maxIterations, int roomWidthMin, int roomLengthMin,
-        float roomBottomCornerModifier, float roomTopCornerModifier, int roomOffset, int corridorWidth)
+
+
+    public List<Node> CalculateDungeon(int maxIterations, int roomWidthMin, int roomLengthMin, float roomBottomCornerModifier, float roomTopCornerMidifier, int roomOffset, int corridorWidth)
     {
-        BinarySpacePartitioner bsp = new BinarySpacePartitioner(dungeonWidth,dungeonLength);
-        allNodeCollection = bsp.PrepareNodesCollection(maxIterations, roomWidthMin, roomLengthMin);
-        List<Node> roomSpaces = StructureHelper.TraverseGraphToExtractLowestLeaves(bsp.RootNode);
+        BinarySpacePartitioner bsp = new BinarySpacePartitioner(dungeonWidth, dungeonLength);
+        allNodesCollection = bsp.PrepareNodesCollection(maxIterations, roomWidthMin, roomLengthMin);
+        List<Node> roomSpaces = StructureHelper.TraverseGraphToExtractLowestLeafes(bsp.RootNode);
 
         RoomGenerator roomGenerator = new RoomGenerator(maxIterations, roomLengthMin, roomWidthMin);
-        List<RoomNode> roomList = roomGenerator.GenerateRoomInAGivenSpaces(roomSpaces, 
-            roomBottomCornerModifier, roomTopCornerModifier,roomOffset);
+        List<RoomNode> roomList = roomGenerator.GenerateRoomsInGivenSpaces(roomSpaces, roomBottomCornerModifier, roomTopCornerMidifier, roomOffset);
 
-        CorridorsGenerator corridorsGenerator = new CorridorsGenerator();
-        var corridorList = corridorsGenerator.CreateCorridor(allNodeCollection, corridorWidth);
+        CorridorsGenerator corridorGenerator = new CorridorsGenerator();
+        var corridorList = corridorGenerator.CreateCorridor(allNodesCollection, corridorWidth);
 
         return new List<Node>(roomList).Concat(corridorList).ToList();
     }
