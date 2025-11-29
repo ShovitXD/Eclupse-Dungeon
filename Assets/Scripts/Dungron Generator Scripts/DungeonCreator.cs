@@ -17,10 +17,16 @@ public class DungeonCreator : MonoBehaviour
     [Range(0, 2)]
     public int roomOffset;
     public GameObject wallVertical, wallHorizontal;
+
     List<Vector3Int> possibleDoorVerticalPosition;
     List<Vector3Int> possibleDoorHorizontalPosition;
     List<Vector3Int> possibleWallHorizontalPosition;
     List<Vector3Int> possibleWallVerticalPosition;
+
+    // Centers you can use to spawn player/boss
+    public Vector3 largestRoomCenter;
+    public Vector3 smallestRoomCenter;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,24 +37,81 @@ public class DungeonCreator : MonoBehaviour
     {
         DestroyAllChildren();
         DugeonGenerator generator = new DugeonGenerator(dungeonWidth, dungeonLength);
-        var listOfRooms = generator.CalculateDungeon(maxIterations,
+        var listOfRooms = generator.CalculateDungeon(
+            maxIterations,
             roomWidthMin,
             roomLengthMin,
             roomBottomCornerModifier,
             roomTopCornerMidifier,
             roomOffset,
             corridorWidth);
+
         GameObject wallParent = new GameObject("WallParent");
         wallParent.transform.parent = transform;
+
         possibleDoorVerticalPosition = new List<Vector3Int>();
         possibleDoorHorizontalPosition = new List<Vector3Int>();
         possibleWallHorizontalPosition = new List<Vector3Int>();
         possibleWallVerticalPosition = new List<Vector3Int>();
+
+        float largestArea = 0f;
+        float smallestArea = float.MaxValue;
+        Vector2 largestBottomLeft = Vector2.zero;
+        Vector2 largestTopRight = Vector2.zero;
+        Vector2 smallestBottomLeft = Vector2.zero;
+        Vector2 smallestTopRight = Vector2.zero;
+
         for (int i = 0; i < listOfRooms.Count; i++)
         {
-            CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
+            Vector2 bottomLeft = listOfRooms[i].BottomLeftAreaCorner;
+            Vector2 topRight = listOfRooms[i].TopRightAreaCorner;
+
+            CreateMesh(bottomLeft, topRight);
+
+            float width = topRight.x - bottomLeft.x;
+            float length = topRight.y - bottomLeft.y;
+            float area = width * length;
+
+            if (area > largestArea)
+            {
+                largestArea = area;
+                largestBottomLeft = bottomLeft;
+                largestTopRight = topRight;
+            }
+
+            if (area < smallestArea)
+            {
+                smallestArea = area;
+                smallestBottomLeft = bottomLeft;
+                smallestTopRight = topRight;
+            }
         }
+
         CreateWalls(wallParent);
+
+        if (largestArea > 0f)
+        {
+            largestRoomCenter = new Vector3(
+                (largestBottomLeft.x + largestTopRight.x) / 2f,
+                0f,
+                (largestBottomLeft.y + largestTopRight.y) / 2f);
+        }
+        else
+        {
+            largestRoomCenter = Vector3.zero;
+        }
+
+        if (smallestArea < float.MaxValue)
+        {
+            smallestRoomCenter = new Vector3(
+                (smallestBottomLeft.x + smallestTopRight.x) / 2f,
+                0f,
+                (smallestBottomLeft.y + smallestTopRight.y) / 2f);
+        }
+        else
+        {
+            smallestRoomCenter = Vector3.zero;
+        }
     }
 
     private void CreateWalls(GameObject wallParent)
@@ -84,14 +147,10 @@ public class DungeonCreator : MonoBehaviour
         };
 
         Vector2[] uvs = new Vector2[vertices.Length];
-
-        float textureScaleX = 1;
-        float textureScaleY = 1;
-
-        uvs[0] = new Vector2(0, textureScaleY);
-        uvs[1] = new Vector2(textureScaleX, textureScaleY);
-        uvs[2] = new Vector2(0, 0);
-        uvs[3] = new Vector2(textureScaleX, 0);
+        for (int i = 0; i < uvs.Length; i++)
+        {
+            uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
+        }
 
         int[] triangles = new int[]
         {
@@ -102,6 +161,7 @@ public class DungeonCreator : MonoBehaviour
             1,
             3
         };
+
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
         mesh.uv = uvs;
@@ -119,12 +179,8 @@ public class DungeonCreator : MonoBehaviour
         dungeonFloor.GetComponent<MeshRenderer>().material = material;
         dungeonFloor.transform.parent = transform;
 
-        // BoxCollider to match the room floor
+        // Floor collider matching the room extents on XZ
         BoxCollider floorCollider = dungeonFloor.GetComponent<BoxCollider>();
-        if (floorCollider == null)
-        {
-            floorCollider = dungeonFloor.AddComponent<BoxCollider>();
-        }
 
         float width = topRightCorner.x - bottomLeftCorner.x;
         float length = topRightCorner.y - bottomLeftCorner.y;
@@ -143,7 +199,7 @@ public class DungeonCreator : MonoBehaviour
                 possibleWallHorizontalPosition,
                 possibleDoorHorizontalPosition);
         }
-        for (int row = (int)topLeftV.x; row < (int)topRightV.x; row++)
+        for (int row = (int)topLeftV.x; row < (int)topRightCorner.x; row++)
         {
             var wallPosition = new Vector3(row, 0, topRightV.z);
             AddWallPositionToList(
