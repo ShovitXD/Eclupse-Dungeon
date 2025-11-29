@@ -465,8 +465,10 @@ MonoBehaviour:
   roomBottomCornerModifier: 0.1
   roomTopCornerMidifier: 0.9
   roomOffset: 1
-  wallVertical: {fileID: 7768656956435837750, guid: 2c003d85d971a5d409e007f0103c52d0, type: 3}
-  wallHorizontal: {fileID: 7768656956435837750, guid: eb4ca6ac2904927489e82906c4bda656, type: 3}
+  wallVertical: {fileID: 4944765286104230468, guid: 8e278831e84398e44b972eca06def2b2, type: 3}
+  wallHorizontal: {fileID: 4944765286104230468, guid: 8e278831e84398e44b972eca06def2b2, type: 3}
+  largestRoomCenter: {x: 0, y: 0, z: 0}
+  smallestRoomCenter: {x: 0, y: 0, z: 0}
 --- !u!4 &1342344977
 Transform:
   m_ObjectHideFlags: 0
