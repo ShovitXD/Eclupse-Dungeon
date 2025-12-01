@@ -168,8 +168,8 @@ public class DungeonCreator : MonoBehaviour
 
         int[] triangles = new int[]
         {
-            0,1,2,
-            2,1,3
+            0, 1, 2,
+            2, 1, 3
         };
 
         Mesh mesh = new Mesh();
@@ -180,7 +180,15 @@ public class DungeonCreator : MonoBehaviour
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
 
-        GameObject floor = new GameObject("Mesh " + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider));
+        GameObject floor = new GameObject(
+            "Mesh " + bottomLeftCorner,
+            typeof(MeshFilter),
+            typeof(MeshRenderer),
+            typeof(BoxCollider));
+
+        // IMPORTANT: put generated floors on the Floor layer
+        floor.layer = LayerMask.NameToLayer("Floor");
+
         floor.transform.position = Vector3.zero;
         floor.transform.localScale = Vector3.one;
         floor.transform.parent = transform;

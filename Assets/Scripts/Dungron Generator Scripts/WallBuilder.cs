@@ -104,6 +104,9 @@ public static class WallBuilder
             typeof(MeshRenderer),
             typeof(BoxCollider));
 
+        // OPTIONAL: put walls on their own layer
+        wallSegment.layer = LayerMask.NameToLayer("Wall");
+
         wallSegment.transform.parent = wallParent;
         wallSegment.transform.localPosition = Vector3.zero;
         wallSegment.transform.localRotation = Quaternion.identity;
