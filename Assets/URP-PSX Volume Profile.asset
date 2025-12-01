@@ -132,16 +132,16 @@ MonoBehaviour:
     m_Value: 3
   vignetteAmount:
     m_OverrideState: 0
-    m_Value: 0.98
+    m_Value: 0
   vignetteSize:
     m_OverrideState: 0
-    m_Value: 2.06
+    m_Value: 0
   vignetteRounding:
     m_OverrideState: 0
-    m_Value: 5.26
+    m_Value: 10
   vignetteSmoothing:
     m_OverrideState: 0
-    m_Value: 0.2
+    m_Value: 0
   scanlinesDensity:
     m_OverrideState: 1
     m_Value: 200
@@ -152,13 +152,13 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 250
   chromaticRed:
-    m_OverrideState: 1
-    m_Value: {x: 0.002, y: -0.002}
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0}
   chromaticGreen:
-    m_OverrideState: 1
-    m_Value: {x: -0.002, y: 0.002}
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0}
   chromaticBlue:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {x: 0, y: 0}
   grilleOpacity:
     m_OverrideState: 1
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   mode:
     m_OverrideState: 1
     m_Value: 1
@@ -356,7 +356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81180773991d8724ab7f2d216912b564, type: 3}
   m_Name: ChromaticAberration
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   intensity:
     m_OverrideState: 1
     m_Value: 0
@@ -705,10 +705,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.464
+    m_Value: 0.31
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.44
+    m_Value: 0.1
   rounded:
     m_OverrideState: 1
     m_Value: 0
@@ -763,10 +763,10 @@ MonoBehaviour:
   active: 1
   fogDensity:
     m_OverrideState: 1
-    m_Value: 18.1
+    m_Value: 0.04
   fogDistance:
     m_OverrideState: 1
-    m_Value: 37
+    m_Value: 140
   fogColor:
     m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 0}
