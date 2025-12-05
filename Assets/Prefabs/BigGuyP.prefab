@@ -1039,10 +1039,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3165121599536500747}
+  - component: {fileID: 8604339942410525484}
+  - component: {fileID: 4578653843156198565}
   - component: {fileID: 6569231747578575695}
+  - component: {fileID: 4737946485399951263}
+  - component: {fileID: -7190651920290314965}
   m_Layer: 0
   m_Name: BigGuyP
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1055,16 +1059,66 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2843990057765724848}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.124727175, z: 0, w: 0.99219114}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 50}
+  m_LocalScale: {x: 90, y: 90, z: 90}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5196902646960793827}
   - {fileID: 1644268551665555209}
   - {fileID: 9022508783913345480}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 14.33, z: 0}
+--- !u!54 &8604339942410525484
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843990057765724848}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
+--- !u!136 &4578653843156198565
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843990057765724848}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.0022919474
+  m_Height: 0.014603552
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.0074029267, z: 0.00044285206}
 --- !u!95 &6569231747578575695
 Animator:
   serializedVersion: 7
@@ -1087,6 +1141,48 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4737946485399951263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843990057765724848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc298c40053ca3a47a0ee8f92269617f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 10
+  xpValue: 2
+  enableCullByDistance: 1
+  cullDistanceFromPlayer: 50
+  player: {fileID: 0}
+--- !u!114 &-7190651920290314965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843990057765724848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0325f16c63d05224f9d83b76cb8527cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  stopDistance: 1.5
+  attackInterval: 3
+  capsuleHeight: 0
+  capsuleRadius: 1
+  damage: 1
+  attackOffset: {x: 0, y: 0.6, z: 0}
+  firstAttackDelay: 0.4
+  attackWindup: 0
+  target: {fileID: 0}
+  animator: {fileID: 0}
+  deathReturnDelay: 2
+  debugAttackCircle: 1
 --- !u!1 &2882128261805897077
 GameObject:
   m_ObjectHideFlags: 0

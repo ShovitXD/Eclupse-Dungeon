@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5787298657172097937}
   - component: {fileID: 4821104452697718830}
+  - component: {fileID: -5975574059451757293}
   m_Layer: 0
   m_Name: Bow
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 7579226112847988855}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.064097136, y: 0.024759278, z: 0.4841193}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -89,3 +90,23 @@ SkinnedMeshRenderer:
     m_Center: {x: 0, y: 0, z: 24.297539}
     m_Extent: {x: 40.186302, y: 1, z: 25.297539}
   m_DirtyAABB: 0
+--- !u!114 &-5975574059451757293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579226112847988855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c20a6a6e6b4224aa436fb8d4cfc86f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePoolId: Arrow
+  shootPoint: {fileID: 5787298657172097937}
+  attackInterval: 1
+  initialDelay: 0
+  bowRenderer: {fileID: 4821104452697718830}
+  blendShapeName: Key1
+  blendShapeSteps: 12
+  blendShapeDuration: 1

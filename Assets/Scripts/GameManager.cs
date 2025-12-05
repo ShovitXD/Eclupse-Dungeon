@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,13 +18,21 @@ public class GameManager : MonoBehaviour
         Amulet = 4
     }
 
+    [Header("Save and Load")]
+    [SerializeField] private bool useSavedProgress = true;
+
     [Header("Current Levels")]
     [SerializeField] private int currentLevel = 0;
     [SerializeField] private int hpLevel = 0;
     [SerializeField] private int speedLevel = 0;
     [SerializeField] private int parryLevel = 0;
 
-    [Header("Base Stats & Per-Level Increments")]
+    [Header("Local Level Progression")]
+    [SerializeField] private int baseLocalLevelsForFirstLevel = 20;
+    [SerializeField] private int extraLocalLevelsPerLevel = 20;
+    [SerializeField] private int localLevelProgress = 0;
+
+    [Header("Base Stats")]
     [SerializeField] private int baseHP = 10;
     [SerializeField] private int hpPerLevel = 10;
 
@@ -34,8 +42,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int baseParry = 1;
     [SerializeField] private int parryPerLevel = 1;
 
-    [Header("Weapon Selection (runtime only)")]
+    [Header("Weapon)")]
     [SerializeField] private WeaponType selectedWeapon = WeaponType.None;
+
+    [Header("Debug")]
+    [SerializeField] private int debugTotalLevel = 0;
+    [SerializeField] private int debugFreeLevelPoints = 0;
 
     public System.Action OnStatsChanged;
 
@@ -44,12 +56,16 @@ public class GameManager : MonoBehaviour
     public int SpeedUpgradeLevel => speedLevel;
     public int ParryUpgradeLevel => parryLevel;
 
+    public int FreeLevelPoints =>
+        Mathf.Clamp(currentLevel - (hpLevel + speedLevel + parryLevel), 0, MaxLevel);
+
     public int CurrentMaxHP => baseHP + hpLevel * hpPerLevel;
     public float CurrentMoveSpeed => baseMoveSpeed + speedLevel * moveSpeedPerLevel;
     public int CurrentParry => baseParry + parryLevel * parryPerLevel;
 
     public WeaponType SelectedWeapon => selectedWeapon;
 
+    // Lifecycle
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -61,33 +77,41 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        LoadData();
+        if (useSavedProgress)
+        {
+            LoadData();
+        }
+        else
+        {
+            ClampLevels();
+        }
+
+        UpdateDebugFields();
         NotifyStatsChanged();
     }
 
-    // ---------------- WEAPON (NOT PERSISTENT) ----------------
-
+    // Weapon
     public void SetWeapon(WeaponType weapon)
     {
         selectedWeapon = weapon;
-        NotifyStatsChanged();   // no save; weapon is per-run only
+        UpdateDebugFields();
+        NotifyStatsChanged();
     }
 
-    // ---------------- UPGRADE API ----------------
-
+    // Upgrade API
     public bool CanUpgradeHP()
     {
-        return currentLevel < MaxLevel && hpLevel < MaxHpLevel;
+        return FreeLevelPoints > 0 && hpLevel < MaxHpLevel;
     }
 
     public bool CanUpgradeSpeed()
     {
-        return currentLevel < MaxLevel && speedLevel < MaxSpeedLevel;
+        return FreeLevelPoints > 0 && speedLevel < MaxSpeedLevel;
     }
 
     public bool CanUpgradeParry()
     {
-        return currentLevel < MaxLevel && parryLevel < MaxParryLevel;
+        return FreeLevelPoints > 0 && parryLevel < MaxParryLevel;
     }
 
     public bool UpgradeHP()
@@ -95,7 +119,6 @@ public class GameManager : MonoBehaviour
         if (!CanUpgradeHP()) return false;
 
         hpLevel++;
-        currentLevel++;
         AutoSaveAndBroadcast();
         return true;
     }
@@ -105,7 +128,6 @@ public class GameManager : MonoBehaviour
         if (!CanUpgradeSpeed()) return false;
 
         speedLevel++;
-        currentLevel++;
         AutoSaveAndBroadcast();
         return true;
     }
@@ -115,17 +137,66 @@ public class GameManager : MonoBehaviour
         if (!CanUpgradeParry()) return false;
 
         parryLevel++;
-        currentLevel++;
         AutoSaveAndBroadcast();
         return true;
     }
 
-    // ---------------- SAVE / LOAD (ONLY PERMANENT UPGRADES) ----------------
+    // Reset all levels
+    public void ResetAllLevels()
+    {
+        currentLevel = 0;
+        hpLevel = 0;
+        speedLevel = 0;
+        parryLevel = 0;
+        localLevelProgress = 0;
 
+        AutoSaveAndBroadcast();
+    }
+
+    // Local player level 
+    public void OnLocalLevelGained()
+    {
+        if (currentLevel >= MaxLevel)
+            return;
+
+        localLevelProgress++;
+
+        // Requirement grows linearly
+        int requiredForNextLevel =
+            baseLocalLevelsForFirstLevel
+            + currentLevel * extraLocalLevelsPerLevel;
+
+        while (currentLevel < MaxLevel && localLevelProgress >= requiredForNextLevel)
+        {
+            localLevelProgress -= requiredForNextLevel;
+
+            currentLevel++;
+
+            requiredForNextLevel =
+                baseLocalLevelsForFirstLevel
+                + currentLevel * extraLocalLevelsPerLevel;
+        }
+
+        AutoSaveAndBroadcast();
+    }
+
+    // Save/load account level
     private void AutoSaveAndBroadcast()
     {
-        SaveData();
+        if (useSavedProgress)
+        {
+            SaveData();
+        }
+
+        ClampLevels();
+        UpdateDebugFields();
         NotifyStatsChanged();
+    }
+
+    private void UpdateDebugFields()
+    {
+        debugTotalLevel = currentLevel;
+        debugFreeLevelPoints = FreeLevelPoints;
     }
 
     private void NotifyStatsChanged()
@@ -139,6 +210,9 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("GM_HPLevel", hpLevel);
         PlayerPrefs.SetInt("GM_SpeedLevel", speedLevel);
         PlayerPrefs.SetInt("GM_ParryLevel", parryLevel);
+
+        PlayerPrefs.SetInt("GM_LocalLevelProgress", localLevelProgress);
+
         PlayerPrefs.Save();
     }
 
@@ -150,6 +224,8 @@ public class GameManager : MonoBehaviour
             hpLevel = PlayerPrefs.GetInt("GM_HPLevel", 0);
             speedLevel = PlayerPrefs.GetInt("GM_SpeedLevel", 0);
             parryLevel = PlayerPrefs.GetInt("GM_ParryLevel", 0);
+
+            localLevelProgress = PlayerPrefs.GetInt("GM_LocalLevelProgress", 0);
         }
         else
         {
@@ -157,14 +233,24 @@ public class GameManager : MonoBehaviour
             hpLevel = 0;
             speedLevel = 0;
             parryLevel = 0;
+            localLevelProgress = 0;
         }
 
+        ClampLevels();
+
+        if (localLevelProgress < 0)
+        {
+            localLevelProgress = 0;
+        }
+
+        selectedWeapon = WeaponType.None;
+    }
+
+    private void ClampLevels()
+    {
         currentLevel = Mathf.Clamp(currentLevel, 0, MaxLevel);
         hpLevel = Mathf.Clamp(hpLevel, 0, MaxHpLevel);
         speedLevel = Mathf.Clamp(speedLevel, 0, MaxSpeedLevel);
         parryLevel = Mathf.Clamp(parryLevel, 0, MaxParryLevel);
-
-        // weapon is always reset per app run
-        selectedWeapon = WeaponType.None;
     }
 }

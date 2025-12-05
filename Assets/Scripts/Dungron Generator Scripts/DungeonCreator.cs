@@ -201,7 +201,7 @@ public class DungeonCreator : MonoBehaviour
         collider.size = new Vector3(width, 1, length);
         collider.center = new Vector3(
             bottomLeftCorner.x + width / 2f,
-            0.5f,
+            -0.5f,
             bottomLeftCorner.y + length / 2f);
     }
 

@@ -10,6 +10,7 @@ public class MenuBtn : MonoBehaviour
         if (uiPanel1 != null)
         {
             uiPanel1.SetActive(!uiPanel1.activeSelf);
+            Debug.Log("Panel toggled");
         }
     }
     public void TogglePanelPlay()
