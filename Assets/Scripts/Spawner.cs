@@ -126,30 +126,6 @@ public class Spawner : MonoBehaviour
         bossInstance = Instantiate(bossPrefab, spawnPos, Quaternion.identity).transform;
     }
 
-    // Enemy pool setup
-    private void InitializePools()
-    {
-        if (enemyType1Prefab != null)
-        {
-            for (int i = 0; i < enemyType1PoolSize; i++)
-            {
-                GameObject obj = Instantiate(enemyType1Prefab, transform);
-                obj.SetActive(false);
-                enemyType1Pool.Add(obj);
-            }
-        }
-
-        if (enemyType2Prefab != null)
-        {
-            for (int i = 0; i < enemyType2PoolSize; i++)
-            {
-                GameObject obj = Instantiate(enemyType2Prefab, transform);
-                obj.SetActive(false);
-                enemyType2Pool.Add(obj);
-            }
-        }
-    }
-
     private void SpawnInitialEnemies()
     {
         int initialLocalLevel = 0;
@@ -310,6 +286,29 @@ public class Spawner : MonoBehaviour
                 return amuletWeaponPrefab;
             default:
                 return null;
+        }
+    }
+    // Enemy pool setup
+    private void InitializePools()
+    {
+        if (enemyType1Prefab != null)
+        {
+            for (int i = 0; i < enemyType1PoolSize; i++)
+            {
+                GameObject obj = Instantiate(enemyType1Prefab, transform);
+                obj.SetActive(false);
+                enemyType1Pool.Add(obj);
+            }
+        }
+
+        if (enemyType2Prefab != null)
+        {
+            for (int i = 0; i < enemyType2PoolSize; i++)
+            {
+                GameObject obj = Instantiate(enemyType2Prefab, transform);
+                obj.SetActive(false);
+                enemyType2Pool.Add(obj);
+            }
         }
     }
 
